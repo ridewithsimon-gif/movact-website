@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movact — 香港中小企數碼化夥伴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0f0f0f;
+    --dark: #141414;
+    --mid: #1c1c1c;
+    --border: #252525;
+    --white: #f4f2ed;
+    --muted: #5a5a5a;
+    --orange: #f5620f;
+    --orange-dim: rgba(245,98,15,0.08);
+    --orange-glow: rgba(245,98,15,0.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.65;overflow-x:hidden;}
+  ::-webkit-scrollbar{width:2px;}
+  ::-webkit-scrollbar-thumb{background:var(--orange);}
+
+  /* ── NOISE OVERLAY ── */
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity:0.4;
+  }
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.2rem 3rem;
+    border-bottom:1px solid var(--border);
+    background:rgba(15,15,15,0.85);
+    backdrop-filter:blur(20px);
+  }
+  .nav-left{display:flex;align-items:center;gap:1.5rem;}
+  .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+  .nav-logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:-0.01em;color:var(--white);}
+  .nav-logo-text span{color:var(--orange);}
+  .lang-toggle{
+    display:flex;align-items:center;gap:0;
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .lang-btn{
+    padding:0.35rem 0.8rem;
+    font-size:0.68rem;font-weight:500;letter-spacing:0.06em;
+    background:transparent;color:var(--muted);border:none;cursor:pointer;
+    transition:background 0.15s,color 0.15s;
+    font-family:'DM Sans',sans-serif;
+  }
+  .lang-btn.active{background:var(--orange);color:var(--black);}
+  .nav-cta{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    background:var(--orange);color:var(--black);
+    padding:0.6rem 1.4rem;
+    font-size:0.78rem;font-weight:500;letter-spacing:0.02em;
+    text-decoration:none;transition:background 0.2s,transform 0.15s;
+  }
+  .nav-cta:hover{background:#ff7a2e;transform:translateY(-1px);}
+
+  /* ── HERO ── */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:8rem 3rem 5rem;position:relative;overflow:hidden;
+  }
+  /* Animated orange orb */
+  .hero-orb{
+    position:absolute;top:-10%;right:-5%;
+    width:600px;height:600px;border-radius:50%;
+    background:radial-gradient(circle, rgba(245,98,15,0.15) 0%, transparent 70%);
+    animation:orbFloat 8s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .hero-orb-2{
+    position:absolute;bottom:-20%;left:-10%;
+    width:400px;height:400px;border-radius:50%;
+    background:radial-gradient(circle, rgba(245,98,15,0.08) 0%, transparent 70%);
+    animation:orbFloat 12s ease-in-out infinite reverse;
+    pointer-events:none;
+  }
+  @keyframes orbFloat{
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-30px) scale(1.05);}
+  }
+  /* Grid pattern */
+  .hero-grid{
+    position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+    background-size:80px 80px;opacity:0.25;
+    mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 30%,transparent 100%);
+  }
+  /* Diagonal accent line */
+  .hero-line{
+    position:absolute;top:0;right:30%;width:1px;height:100%;
+    background:linear-gradient(to bottom,transparent,rgba(245,98,15,0.3),transparent);
+    pointer-events:none;
+  }
+
+  .hero-content{position:relative;z-index:1;max-width:820px;}
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:0.7rem;
+    font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);
+    margin-bottom:2rem;
+  }
+  .hero-eyebrow::before{content:'';display:inline-block;width:28px;height:1px;background:var(--orange);}
+  .hero h1{
+    font-family:'Syne',sans-serif;
+    font-size:clamp(3rem,7vw,5.5rem);
+    font-weight:800;line-height:1.0;letter-spacing:-0.04em;
+    margin-bottom:2rem;
+  }
+  .hero h1 .accent{color:var(--orange);}
+  .hero h1 .dim{color:#3a3a3a;}
+  .hero-sub{font-size:1rem;color:#888;max-width:500px;line-height:1.8;margin-bottom:2.5rem;}
+  .hero-sub strong{color:var(--white);font-weight:400;}
+  .hero-actions{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:0.6rem;
+    background:var(--orange);color:var(--black);
+    padding:0.9rem 2rem;font-size:0.85rem;font-weight:500;
+    text-decoration:none;letter-spacing:0.02em;
+    transition:background 0.2s,transform 0.15s,box-shadow 0.2s;
+    position:relative;overflow:hidden;
+  }
+  .btn-primary::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+    opacity:0;transition:opacity 0.2s;
+  }
+  .btn-primary:hover{background:#ff7a2e;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,98,15,0.4);}
+  .btn-primary:hover::after{opacity:1;}
+  .btn-primary svg{width:14px;height:14px;}
+  .hero-note{font-size:0.72rem;color:var(--muted);letter-spacing:0.04em;}
+
+  /* Floating stats */
+  .hero-stats{
+    display:flex;gap:3rem;margin-top:4rem;
+    padding-top:2rem;border-top:1px solid var(--border);
+  }
+  .hero-stat-item{}
+  .hero-stat-num{
+    font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;
+    color:var(--orange);line-height:1;
+  }
+  .hero-stat-label{font-size:0.72rem;color:var(--muted);margin-top:0.3rem;letter-spacing:0.04em;}
+
+  /* ── SECTION COMMONS ── */
+  .section-eyebrow{
+    font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);
+    margin-bottom:0.8rem;display:flex;align-items:center;gap:0.7rem;
+  }
+  .section-eyebrow::before{content:'';display:inline-block;width:20px;height:1px;background:var(--orange);}
+  .section-title{
+    font-family:'Syne',sans-serif;
+    font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700;
+    letter-spacing:-0.025em;line-height:1.15;
+  }
+  .section-title em{font-style:italic;color:var(--orange);font-weight:400;}
+
+  /* ── MARQUEE TICKER ── */
+  .ticker{
+    border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    overflow:hidden;padding:1rem 0;background:var(--dark);
+    position:relative;
+  }
+  .ticker::before,.ticker::after{
+    content:'';position:absolute;top:0;width:100px;height:100%;z-index:2;
+  }
+  .ticker::before{left:0;background:linear-gradient(to right,var(--dark),transparent);}
+  .ticker::after{right:0;background:linear-gradient(to left,var(--dark),transparent);}
+  .ticker-track{
+    display:flex;gap:0;
+    animation:tickerScroll 30s linear infinite;
+    width:max-content;
+  }
+  .ticker-item{
+    display:flex;align-items:center;gap:1rem;
+    padding:0 2.5rem;white-space:nowrap;
+    font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);
+  }
+  .ticker-dot{width:4px;height:4px;border-radius:50%;background:var(--orange);flex-shrink:0;}
+  @keyframes tickerScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+  /* ── PAIN ── */
+  .pain{padding:6rem 3rem;border-top:1px solid var(--border);}
+  .pain-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:1px;background:var(--border);border:1px solid var(--border);
+    margin-top:3rem;
+  }
+  .pain-card{
+    background:var(--dark);padding:2.5rem;
+    position:relative;overflow:hidden;
+    transition:background 0.3s;
+  }
+  .pain-card::before{
+    content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+    background:var(--orange);transform:scaleX(0);transform-origin:left;
+    transition:transform 0.3s ease;
+  }
+  .pain-card:hover{background:var(--mid);}
+  .pain-card:hover::before{transform:scaleX(1);}
+  .pain-num{
+    font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+    color:rgba(245,98,15,0.08);line-height:1;margin-bottom:1.5rem;
+    letter-spacing:-0.04em;
+  }
+  .pain-card h3{font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:600;margin-bottom:0.6rem;}
+  .pain-card p{font-size:0.8rem;color:#666;line-height:1.65;}
+
+  /* ── HOW ── */
+  .how{padding:6rem 3rem;border-top:1px solid var(--border);background:var(--dark);position:relative;overflow:hidden;}
+  .how::before{
+    content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:1px;height:100%;background:linear-gradient(to bottom,transparent,var(--border),transparent);
+  }
+  .how-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+  .how-steps{display:flex;flex-direction:column;}
+  .how-step{
+    display:flex;gap:1.5rem;padding:1.8rem 0;
+    border-bottom:1px solid var(--border);
+    opacity:0;transform:translateX(-16px);
+    transition:opacity 0.6s ease,transform 0.6s ease;
+  }
+  .how-step:first-child{padding-top:0;}
+  .how-step:last-child{border-bottom:none;}
+  .how-step.visible{opacity:1;transform:translateX(0);}
+  .how-step:nth-child(2){transition-delay:0.1s;}
+  .how-step:nth-child(3){transition-delay:0.2s;}
+  .how-step:nth-child(4){transition-delay:0.3s;}
+  .step-num{
+    font-family:'Syne',sans-serif;font-size:0.68rem;font-weight:700;
+    color:var(--orange);letter-spacing:0.1em;flex-shrink:0;padding-top:0.15rem;width:24px;
+  }
+  .step-content h3{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;}
+  .step-content p{font-size:0.8rem;color:#666;line-height:1.65;}
+
+  /* ── SERVICES ── */
+  .services{padding:6rem 3rem;border-top:1px solid var(--border);}
+  .services-intro{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-bottom:3rem;align-items:end;}
+  .services-note{font-size:0.85rem;color:#666;line-height:1.75;}
+  .services-note strong{color:var(--white);font-weight:400;}
+  .services-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:1px;background:var(--border);border:1px solid var(--border);
+  }
+  .service-item{
+    background:var(--dark);padding:2rem 2.2rem;
+    display:flex;flex-direction:column;gap:0.8rem;
+    transition:background 0.2s,transform 0.2s;
+    position:relative;overflow:hidden;cursor:default;
+  }
+  .service-item::after{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(to right,var(--orange),transparent);
+    transform:scaleX(0);transform-origin:left;transition:transform 0.3s;
+  }
+  .service-item:hover{background:var(--mid);}
+  .service-item:hover::after{transform:scaleX(1);}
+  .service-tag{
+    font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--orange);background:var(--orange-dim);
+    padding:0.2rem 0.6rem;display:inline-block;width:fit-content;
+  }
+  .service-item h3{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:600;}
+  .service-item p{font-size:0.77rem;color:#555;line-height:1.6;}
+
+  /* ── CASE ── */
+  .case{padding:6rem 3rem;border-top:1px solid var(--border);background:var(--dark);}
+  .case-inner{border:1px solid var(--border);position:relative;overflow:hidden;}
+  .case-inner::before{
+    content:'';position:absolute;top:0;right:0;width:300px;height:300px;
+    background:radial-gradient(circle,rgba(245,98,15,0.06) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .case-header{
+    padding:2.5rem 3rem;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap;
+  }
+  .case-badge{
+    font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--orange);background:var(--orange-dim);
+    padding:0.3rem 0.8rem;border:1px solid rgba(245,98,15,0.2);
+  }
+  .case-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:-0.01em;margin-top:0.6rem;}
+  .case-meta{font-size:0.72rem;color:var(--muted);display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:0.5rem;}
+  .case-stats{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:1px;background:var(--border);border-bottom:1px solid var(--border);
+  }
+  .case-stat{padding:2rem 2.5rem;background:var(--black);position:relative;}
+  .case-stat-num{
+    font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;
+    color:var(--orange);line-height:1;margin-bottom:0.4rem;
+  }
+  .case-stat-label{font-size:0.7rem;color:#555;line-height:1.4;}
+  .case-body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+  .case-col{background:var(--black);padding:2.5rem;}
+  .case-col-label{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem;}
+  .case-col.after .case-col-label{color:var(--orange);}
+  .case-row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:0.7rem 0;border-bottom:1px solid var(--border);font-size:0.8rem;
+  }
+  .case-row:last-child{border-bottom:none;}
+  .case-row .label{color:#555;}
+  .case-row .val{font-weight:500;}
+  .case-col.before .val{color:#cc4444;}
+  .case-col.after .val{color:var(--orange);}
+  .case-quote{
+    padding:2.5rem 3rem;border-top:1px solid var(--border);
+    display:flex;gap:1.5rem;align-items:flex-start;
+    background:linear-gradient(135deg,rgba(245,98,15,0.03),transparent);
+  }
+  .quote-mark{font-family:'Syne',sans-serif;font-size:3.5rem;color:var(--orange);line-height:0.7;flex-shrink:0;}
+  .quote-text{font-size:0.95rem;color:#bbb;line-height:1.75;font-style:italic;}
+  .quote-attr{font-size:0.68rem;color:var(--muted);margin-top:0.8rem;font-style:normal;letter-spacing:0.04em;}
+  .case-cta{
+    padding:2rem 3rem;border-top:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  }
+  .case-cta-text{font-size:0.82rem;color:var(--muted);}
+  .case-cta-text strong{color:var(--white);font-weight:400;}
+  .btn-outline{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    border:1px solid var(--orange);color:var(--orange);
+    padding:0.6rem 1.4rem;font-size:0.78rem;text-decoration:none;letter-spacing:0.04em;
+    transition:background 0.2s,color 0.2s,box-shadow 0.2s;
+  }
+  .btn-outline:hover{background:var(--orange);color:var(--black);box-shadow:0 4px 20px rgba(245,98,15,0.3);}
+
+  /* ── WHY ── */
+  .why{padding:6rem 3rem;border-top:1px solid var(--border);}
+  .why-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);
+    gap:1px;background:var(--border);border:1px solid var(--border);margin-top:3rem;
+  }
+  .why-item{
+    background:var(--dark);padding:2.5rem;display:flex;gap:1.5rem;
+    transition:background 0.2s;
+  }
+  .why-item:hover{background:var(--mid);}
+  .why-num{
+    font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;
+    color:rgba(245,98,15,0.1);line-height:1;flex-shrink:0;width:3rem;
+    transition:color 0.3s;
+  }
+  .why-item:hover .why-num{color:rgba(245,98,15,0.25);}
+  .why-text h3{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:600;margin-bottom:0.5rem;}
+  .why-text p{font-size:0.78rem;color:#555;line-height:1.65;}
+
+  /* ── PRICING ── */
+  .pricing{padding:6rem 3rem;border-top:1px solid var(--border);background:var(--dark);}
+  .pricing-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:1px;background:var(--border);border:1px solid var(--border);margin-top:3rem;
+  }
+  .price-card{background:var(--black);padding:2.5rem;display:flex;flex-direction:column;gap:1.5rem;}
+  .price-card.featured{
+    background:var(--mid);
+    box-shadow:inset 0 0 0 1px rgba(245,98,15,0.3);
+    position:relative;
+  }
+  .price-featured-tag{
+    position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+    background:var(--orange);color:var(--black);
+    font-size:0.58rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+    padding:0.2rem 0.8rem;white-space:nowrap;
+  }
+  .price-name{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+  .price-amount{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;letter-spacing:-0.02em;line-height:1;color:var(--white);}
+  .price-amount sup{font-size:0.9rem;vertical-align:super;}
+  .price-note{font-size:0.72rem;color:var(--muted);font-weight:300;}
+  .price-desc{font-size:0.78rem;color:#555;line-height:1.65;padding-top:0.5rem;border-top:1px solid var(--border);}
+  .price-features{list-style:none;display:flex;flex-direction:column;gap:0.55rem;}
+  .price-features li{font-size:0.76rem;color:#666;display:flex;gap:0.6rem;align-items:flex-start;}
+  .price-features li::before{content:'—';color:var(--orange);flex-shrink:0;}
+
+  /* ── CONTACT ── */
+  .contact{padding:6rem 3rem;border-top:1px solid var(--border);position:relative;overflow:hidden;}
+  .contact::before{
+    content:'';position:absolute;bottom:-100px;right:-100px;
+    width:500px;height:500px;border-radius:50%;
+    background:radial-gradient(circle,rgba(245,98,15,0.06) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .contact-center{max-width:600px;margin:0 auto;text-align:center;position:relative;z-index:1;}
+  .contact-center h2{
+    font-family:'Syne',sans-serif;
+    font-size:clamp(2.2rem,4vw,3.2rem);font-weight:800;
+    letter-spacing:-0.035em;line-height:1.1;margin-bottom:1.2rem;
+  }
+  .contact-center h2 em{font-style:italic;color:var(--orange);font-weight:400;}
+  .contact-center p{font-size:0.9rem;color:#666;line-height:1.8;margin-bottom:2.5rem;}
+  .contact-wa{
+    display:inline-flex;align-items:center;gap:0.8rem;
+    background:var(--orange);color:var(--black);
+    padding:1.1rem 2.5rem;font-size:0.9rem;font-weight:500;
+    text-decoration:none;letter-spacing:0.02em;
+    transition:background 0.2s,transform 0.15s,box-shadow 0.2s;
+    margin-bottom:1.2rem;
+  }
+  .contact-wa:hover{background:#ff7a2e;transform:translateY(-2px);box-shadow:0 10px 40px rgba(245,98,15,0.35);}
+  .contact-wa svg{width:20px;height:20px;}
+  .contact-note{font-size:0.7rem;color:var(--muted);letter-spacing:0.06em;display:block;}
+
+  /* ── FOOTER ── */
+  footer{
+    border-top:1px solid var(--border);padding:2rem 3rem;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+  }
+  .footer-left{display:flex;align-items:center;gap:1rem;}
+  .footer-logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#333;}
+  .footer-logo-text span{color:var(--orange);}
+  .footer-tagline{font-size:0.65rem;color:#2a2a2a;letter-spacing:0.04em;}
+  .footer-copy{font-size:0.65rem;color:#2a2a2a;letter-spacing:0.04em;}
+
+  /* ── FADE ANIMATIONS ── */
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+  .fade-up.visible{opacity:1;transform:translateY(0);}
+  .fade-up.d1{transition-delay:0.1s;}
+  .fade-up.d2{transition-delay:0.2s;}
+  .fade-up.d3{transition-delay:0.3s;}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    nav{padding:1.2rem 1.5rem;}
+    .hero,.pain,.how,.services,.case,.why,.pricing,.contact{padding:4rem 1.5rem;}
+    .pain-grid,.services-grid{grid-template-columns:1fr;}
+    .how-layout{grid-template-columns:1fr;gap:3rem;}
+    .how::before{display:none;}
+    .services-intro{grid-template-columns:1fr;gap:1.5rem;}
+    .case-stats{grid-template-columns:1fr 1fr;}
+    .case-body{grid-template-columns:1fr;}
+    .case-header{flex-direction:column;align-items:flex-start;}
+    .why-grid{grid-template-columns:1fr;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .hero-stats{gap:1.5rem;flex-wrap:wrap;}
+    footer{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a href="#" class="nav-logo">
+      <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" rx="5" fill="#f5620f"/>
+        <rect x="9" y="10" width="7" height="7" rx="1" fill="#0f0f0f"/>
+        <rect x="20" y="10" width="7" height="7" rx="1" fill="#0f0f0f"/>
+        <rect x="9" y="20" width="18" height="6" rx="1" fill="#0f0f0f"/>
+      </svg>
+      <span class="nav-logo-text">MOV<span>ACT</span></span>
+    </a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('zh')" id="btn-zh">中文</button>
+      <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+    </div>
+  </div>
+  <a href="https://wa.me/852XXXXXXXX?text=你好，我想了解多一點關於Movact的服務" class="nav-cta" target="_blank">
+    <span data-zh="免費諮詢 →" data-en="Free Consult →">免費諮詢 →</span>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-orb-2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" data-zh="香港中小企數碼化夥伴 · Hong Kong" data-en="Digital Automation Partner · Hong Kong">香港中小企數碼化夥伴 · Hong Kong</div>
+    <h1>
+      <span data-zh="唔使花大錢，" data-en="No big budgets,">唔使花大錢，</span><br>
+      <span class="accent" data-zh="兩週內" data-en="in two weeks">兩週內</span>
+      <span data-zh="幫你" data-en="we automate"> 幫你</span><br>
+      <span class="dim" data-zh="省時省力。" data-en="what you repeat daily.">省時省力。</span>
+    </h1>
+    <p class="hero-sub">
+      <span data-zh="你每週重複做嗰件事——出單、對帳、跟進——" data-en="The task you repeat every week — invoicing, reconciliation, follow-ups —">你每週重複做嗰件事——出單、對帳、跟進——</span>
+      <strong data-zh="可以自動搞掂" data-en="can be automated">可以自動搞掂</strong>
+      <span data-zh="。用 Google 工具度身訂造，唔使月費授權、唔使大系統。" data-en=". Built with Google tools, no monthly licence fees, no bloated ERP.">。用 Google 工具度身訂造，唔使月費授權、唔使大系統。</span>
+    </p>
+    <div class="hero-actions">
+      <a href="https://wa.me/852XXXXXXXX?text=你好，我想了解多一點關於Movact的服務" class="btn-primary" target="_blank">
+        <span data-zh="WhatsApp 免費諮詢" data-en="WhatsApp Free Consult">WhatsApp 免費諮詢</span>
+        <svg viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <span class="hero-note" data-zh="免費了解 · 唔夾唔使錢" data-en="No pressure · Completely free">免費了解 · 唔夾唔使錢</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">62%</div>
+        <div class="hero-stat-label" data-zh="行政工時節省" data-en="Admin time saved">行政工時節省</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">180+</div>
+        <div class="hero-stat-label" data-zh="每週自動出單" data-en="Auto invoices / week">每週自動出單</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">$0</div>
+        <div class="hero-stat-label" data-zh="額外授權費" data-en="Monthly licence fees">額外授權費</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">12</div>
+        <div class="hero-stat-label" data-zh="工作天交付" data-en="Working days to deliver">工作天交付</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="ticker-dot"></span><span>自動出單系統</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>表單簽核流程</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>庫存管理系統</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>派工追蹤系統</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>數據儀表板</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>客戶關係管理</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Invoice Automation</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Approval Workflows</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Inventory Tracking</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Field Operations</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>BI Dashboards</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>CRM Systems</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item"><span class="ticker-dot"></span><span>自動出單系統</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>表單簽核流程</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>庫存管理系統</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>派工追蹤系統</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>數據儀表板</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>客戶關係管理</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Invoice Automation</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Approval Workflows</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Inventory Tracking</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>Field Operations</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>BI Dashboards</span></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span>CRM Systems</span></div>
+  </div>
+</div>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="section-eyebrow" data-zh="你係唔係有呢個感受？" data-en="Does this sound familiar?">你係唔係有呢個感受？</div>
+  <h2 class="section-title" data-zh="每週都係<em>做緊同樣嘅嘢</em>" data-en="Every week,<br><em>the same tasks</em>">每週都係<em>做緊同樣嘅嘢</em></h2>
+  <div class="pain-grid fade-up">
+    <div class="pain-card">
+      <div class="pain-num">01</div>
+      <h3 data-zh="人手計算，易出錯" data-en="Manual calculations, prone to errors">人手計算，易出錯</h3>
+      <p data-zh="每週逐筆計數、填 Excel、核對，一旦出錯就要重做，壓力大又費時。" data-en="Calculating row by row, filling spreadsheets, reconciling — one mistake means starting over.">每週逐筆計數、填 Excel、核對，一旦出錯就要重做，壓力大又費時。</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">02</div>
+      <h3 data-zh="WhatsApp 逐個回，逐個入" data-en="WhatsApp messages, entered one by one">WhatsApp 逐個回，逐個入</h3>
+      <p data-zh="客戶透過 WhatsApp 發資料，職員要逐條翻閱、手動輸入，做唔完。" data-en="Customers send data via WhatsApp. Staff manually review and re-enter every single message.">客戶透過 WhatsApp 發資料，職員要逐條翻閱、手動輸入，做唔完。</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-num">03</div>
+      <h3 data-zh="文件製作重複又費時" data-en="Document creation — same thing, every time">文件製作重複又費時</h3>
+      <p data-zh="報價單、發票、通知逐張人手做，十個客就做十次，一百個客就做一百次。" data-en="Invoices, quotes, notifications — made by hand. 10 clients means 10 times. 100 clients means 100 times.">報價單、發票、通知逐張人手做，十個客就做十次，一百個客就做一百次。</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how">
+  <div class="how-layout">
+    <div class="how-left">
+      <div class="section-eyebrow" data-zh="我們點樣幫到你" data-en="How we work">我們點樣幫到你</div>
+      <h2 class="section-title" data-zh="簡單四步，<br><em>系統幫你做</em>" data-en="Four steps,<br><em>system does the rest</em>">簡單四步，<br><em>系統幫你做</em></h2>
+      <p style="font-size:0.85rem;color:#555;line-height:1.8;margin-top:1.2rem;" data-zh="唔係賣你一個大系統然後自己摸索。我們親自了解你嘅業務，幫你找出最值得自動化嗰一步，然後用你熟悉嘅 Google 工具建好，交到你手。" data-en="We don't sell you a system and leave you to figure it out. We understand your business, identify the highest-value automation, build it with familiar Google tools, and hand it over.">唔係賣你一個大系統然後自己摸索。我們親自了解你嘅業務，幫你找出最值得自動化嗰一步，然後用你熟悉嘅 Google 工具建好，交到你手。</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <span class="step-num">01</span>
+        <div class="step-content">
+          <h3 data-zh="免費了解業務" data-en="Free discovery call">免費了解業務</h3>
+          <p data-zh="WhatsApp 或見面傾，了解你公司日常流程、現有痛點，唔需要準備任何東西。" data-en="Chat via WhatsApp or in person. We learn your workflow and pain points. No prep needed.">WhatsApp 或見面傾，了解你公司日常流程、現有痛點，唔需要準備任何東西。</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <span class="step-num">02</span>
+        <div class="step-content">
+          <h3 data-zh="提交度身方案" data-en="Custom proposal">提交度身方案</h3>
+          <p data-zh="根據你嘅實際需求，提供清晰報價同建議方案——唔係套餐，係真係為你設計嘅。" data-en="We propose a solution tailored to your workflow — not a package, but something designed specifically for you.">根據你嘅實際需求，提供清晰報價同建議方案——唔係套餐，係真係為你設計嘅。</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <span class="step-num">03</span>
+        <div class="step-content">
+          <h3 data-zh="兩週內交付系統" data-en="Delivered in two weeks">兩週內交付系統</h3>
+          <p data-zh="用 Google Sheets、Apps Script、Forms 建好系統，附完整操作手冊，職員可以獨立操作。" data-en="Built with Google Sheets, Apps Script and Forms. Includes a full SOP manual — your staff can run it independently.">用 Google Sheets、Apps Script、Forms 建好系統，附完整操作手冊，職員可以獨立操作。</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <span class="step-num">04</span>
+        <div class="step-content">
+          <h3 data-zh="持續支援" data-en="Ongoing support">持續支援</h3>
+          <p data-zh="上線後繼續有我哋跟進，有問題隨時 WhatsApp，月費維護確保系統穩定運行。" data-en="We stay with you after launch. WhatsApp us anytime. Monthly maintenance keeps everything running.">上線後繼續有我哋跟進，有問題隨時 WhatsApp，月費維護確保系統穩定運行。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services">
+  <div class="services-intro">
+    <div>
+      <div class="section-eyebrow" data-zh="我們的服務" data-en="Our Services">我們的服務</div>
+      <h2 class="section-title" data-zh="你需要咩，<br><em>我們幫你做</em>" data-en="What you need,<br><em>we build it</em>">你需要咩，<br><em>我們幫你做</em></h2>
+    </div>
+    <p class="services-note" data-zh="以下係常見嘅應用場景，但每個業務都唔同——<strong>如果你有其他重複性嘅工作想自動化，歡迎直接問我們</strong>，大部分情況都可以幫到。" data-en="These are common use cases, but every business is different. <strong>If you have other repetitive tasks to automate, just ask</strong> — we can help with most things.">以下係常見嘅應用場景，但每個業務都唔同——<strong>如果你有其他重複性嘅工作想自動化，歡迎直接問我們</strong>，大部分情況都可以幫到。</p>
+  </div>
+  <div class="services-grid fade-up">
+    <div class="service-item">
+      <span class="service-tag" data-zh="自動化" data-en="Automation">自動化</span>
+      <h3 data-zh="自動出單系統" data-en="Auto Invoice System">自動出單系統</h3>
+      <p data-zh="批量生成 PDF 發票/報價單，自動發送通知，對帳一鍵完成。已為車隊管理公司節省 62% 行政時間。" data-en="Batch-generate PDF invoices, auto-send notifications, one-click reconciliation. Saved a fleet company 62% admin time.">批量生成 PDF 發票/報價單，自動發送通知，對帳一鍵完成。已為車隊管理公司節省 62% 行政時間。</p>
+    </div>
+    <div class="service-item">
+      <span class="service-tag" data-zh="流程" data-en="Workflow">流程</span>
+      <h3 data-zh="表單簽核系統" data-en="Approval Workflow">表單簽核系統</h3>
+      <p data-zh="請假、報銷、採購審批電子化，自動通知審批人，記錄清晰，告別 WhatsApp 截圖審批。" data-en="Digitise leave, expense and purchase approvals. Auto-notify approvers. No more screenshot-based approvals.">請假、報銷、採購審批電子化，自動通知審批人，記錄清晰，告別 WhatsApp 截圖審批。</p>
+    </div>
+    <div class="service-item">
+      <span class="service-tag" data-zh="管理" data-en="Management">管理</span>
+      <h3 data-zh="庫存盤點系統" data-en="Inventory System">庫存盤點系統</h3>
+      <p data-zh="掃碼或填表即時更新庫存，自動提醒補貨，告別人手 Excel 盤點，數字永遠準確。" data-en="Scan or submit forms to update stock in real-time. Auto reorder alerts. No more manual spreadsheet counts.">掃碼或填表即時更新庫存，自動提醒補貨，告別人手 Excel 盤點，數字永遠準確。</p>
+    </div>
+    <div class="service-item">
+      <span class="service-tag" data-zh="追蹤" data-en="Tracking">追蹤</span>
+      <h3 data-zh="派工追蹤系統" data-en="Field Operations Tracker">派工追蹤系統</h3>
+      <p data-zh="外勤任務派發、進度追蹤、完成確認，主管隨時睇實況，唔使逐個打電話問。" data-en="Assign field tasks, track progress, confirm completion. Managers see live status without calling anyone.">外勤任務派發、進度追蹤、完成確認，主管隨時睇實況，唔使逐個打電話問。</p>
+    </div>
+    <div class="service-item">
+      <span class="service-tag" data-zh="管理" data-en="Management">管理</span>
+      <h3 data-zh="客戶關係管理" data-en="CRM System">客戶關係管理</h3>
+      <p data-zh="客戶資料、跟進紀錄、合約到期提醒，簡單易用，唔需要複雜 CRM 軟件。" data-en="Customer records, follow-up logs, contract expiry alerts — simple and effective, no complex CRM needed.">客戶資料、跟進紀錄、合約到期提醒，簡單易用，唔需要複雜 CRM 軟件。</p>
+    </div>
+    <div class="service-item">
+      <span class="service-tag" data-zh="報表" data-en="Analytics">報表</span>
+      <h3 data-zh="數據儀表板" data-en="Business Dashboard">數據儀表板</h3>
+      <p data-zh="將現有 Excel 資料轉化成即時視覺化報表，老闆一眼掌握業務狀況。" data-en="Transform your existing Excel data into live visual dashboards. See your business at a glance.">將現有 Excel 資料轉化成即時視覺化報表，老闆一眼掌握業務狀況。</p>
+    </div>
+  </div>
+</section>
+
+<!-- CASE -->
+<section class="case">
+  <div class="section-eyebrow" data-zh="真實案例" data-en="Case Study">真實案例</div>
+  <h2 class="section-title" style="margin-bottom:2rem;" data-zh="我們做到嘅<em>真實成果</em>" data-en="Real results we<em> delivered</em>">我們做到嘅<em>真實成果</em></h2>
+  <div class="case-inner fade-up">
+    <div class="case-header">
+      <div>
+        <span class="case-badge" data-zh="Case Study · 的士車隊" data-en="Case Study · Taxi Fleet">Case Study · 的士車隊</span>
+        <div class="case-title" data-zh="的士車隊租務自動化系統" data-en="Taxi Fleet Rental Automation System">的士車隊租務自動化系統</div>
+        <div class="case-meta">
+          <span data-zh="🚖 的士車隊管理" data-en="🚖 Taxi Fleet Management">🚖 的士車隊管理</span>
+          <span data-zh="👥 180+ 活躍司機" data-en="👥 180+ Active Drivers">👥 180+ 活躍司機</span>
+          <span data-zh="📅 12 個工作天交付" data-en="📅 Delivered in 12 working days">📅 12 個工作天交付</span>
+        </div>
+      </div>
+    </div>
+    <div class="case-stats">
+      <div class="case-stat">
+        <div class="case-stat-num">62%</div>
+        <div class="case-stat-label" data-zh="每週行政工時節省" data-en="Weekly admin time saved">每週行政工時節省</div>
+      </div>
+      <div class="case-stat">
+        <div class="case-stat-num">180+</div>
+        <div class="case-stat-label" data-zh="每週自動出單數量" data-en="Auto invoices per week">每週自動出單數量</div>
+      </div>
+      <div class="case-stat">
+        <div class="case-stat-num">0</div>
+        <div class="case-stat-label" data-zh="上線後人手計算錯誤" data-en="Manual errors since launch">上線後人手計算錯誤</div>
+      </div>
+      <div class="case-stat">
+        <div class="case-stat-num">$0</div>
+        <div class="case-stat-label" data-zh="額外月費授權費用" data-en="Monthly licence fees">額外月費授權費用</div>
+      </div>
+    </div>
+    <div class="case-body">
+      <div class="case-col before">
+        <div class="case-col-label" data-zh="— 上線前" data-en="— Before">— 上線前</div>
+        <div class="case-row"><span class="label" data-zh="每週人手" data-en="Weekly staffing">每週人手</span><span class="val" data-zh="2人 × 2天" data-en="2 staff × 2 days">2人 × 2天</span></div>
+        <div class="case-row"><span class="label" data-zh="租金計算" data-en="Rent calculation">租金計算</span><span class="val" data-zh="人手 Excel" data-en="Manual Excel">人手 Excel</span></div>
+        <div class="case-row"><span class="label" data-zh="發票生成" data-en="Invoice creation">發票生成</span><span class="val" data-zh="逐張人手製作" data-en="One by one, manually">逐張人手製作</span></div>
+        <div class="case-row"><span class="label" data-zh="入數核對" data-en="Payment check">入數核對</span><span class="val" data-zh="翻查 WhatsApp" data-en="Scrolling WhatsApp">翻查 WhatsApp</span></div>
+        <div class="case-row"><span class="label" data-zh="出錯風險" data-en="Error risk">出錯風險</span><span class="val" data-zh="高" data-en="High">高</span></div>
+      </div>
+      <div class="case-col after">
+        <div class="case-col-label" data-zh="+ 上線後" data-en="+ After">+ 上線後</div>
+        <div class="case-row"><span class="label" data-zh="每週人手" data-en="Weekly staffing">每週人手</span><span class="val" data-zh="1人 × 1.5天" data-en="1 staff × 1.5 days">1人 × 1.5天</span></div>
+        <div class="case-row"><span class="label" data-zh="租金計算" data-en="Rent calculation">租金計算</span><span class="val" data-zh="系統自動計算" data-en="Auto-calculated">系統自動計算</span></div>
+        <div class="case-row"><span class="label" data-zh="發票生成" data-en="Invoice creation">發票生成</span><span class="val" data-zh="批量一鍵生成" data-en="Batch, one click">批量一鍵生成</span></div>
+        <div class="case-row"><span class="label" data-zh="入數核對" data-en="Payment check">入數核對</span><span class="val" data-zh="Google Form 自動對帳" data-en="Google Form auto-match">Google Form 自動對帳</span></div>
+        <div class="case-row"><span class="label" data-zh="出錯風險" data-en="Error risk">出錯風險</span><span class="val" data-zh="極低" data-en="Minimal">極低</span></div>
+      </div>
+    </div>
+    <div class="case-quote">
+      <span class="quote-mark">"</span>
+      <div>
+        <div class="quote-text" data-zh="以前出單要兩個人做兩日，而家一個人做半日就夠，仲唔會計錯數。" data-en="It used to take two people two full days to issue invoices. Now one person does it in half a day — with zero calculation errors.">以前出單要兩個人做兩日，而家一個人做半日就夠，仲唔會計錯數。</div>
+        <div class="quote-attr" data-zh="— 客戶，的士車隊管理人 · 香港" data-en="— Client, Taxi Fleet Manager · Hong Kong">— 客戶，的士車隊管理人 · 香港</div>
+      </div>
+    </div>
+    <div class="case-cta">
+      <div class="case-cta-text">
+        <span data-zh="你嘅業務，也有" data-en="Your business also has ">你嘅業務，也有</span>
+        <strong data-zh="每週重複做嘅事" data-en="tasks you repeat every week">每週重複做嘅事</strong>
+        <span data-zh="嗎？" data-en=", right?">嗎？</span>
+      </div>
+      <a href="https://wa.me/852XXXXXXXX?text=你好，我想了解多一點關於Movact的服務" class="btn-outline" target="_blank">
+        <span data-zh="免費傾一傾 →" data-en="Let's chat for free →">免費傾一傾 →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <div class="section-eyebrow" data-zh="點解揀我們" data-en="Why Movact">點解揀我們</div>
+  <h2 class="section-title" data-zh="唔係最大，但係最<em>適合你</em>" data-en="Not the biggest,<br>but the best fit <em>for you</em>">唔係最大，但係最<em>適合你</em></h2>
+  <div class="why-grid fade-up">
+    <div class="why-item">
+      <span class="why-num">01</span>
+      <div class="why-text">
+        <h3 data-zh="唔賣你唔需要嘅嘢" data-en="We don't oversell">唔賣你唔需要嘅嘢</h3>
+        <p data-zh="唔會推銷幾萬蚊嘅大系統俾你，只幫你解決真正嘅痛點，用最簡單嘅方法做到。" data-en="No upselling bloated systems. We solve your actual problem with the simplest effective solution.">唔會推銷幾萬蚊嘅大系統俾你，只幫你解決真正嘅痛點，用最簡單嘅方法做到。</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <span class="why-num">02</span>
+      <div class="why-text">
+        <h3 data-zh="兩週內交付，唔係三個月" data-en="Two weeks, not three months">兩週內交付，唔係三個月</h3>
+        <p data-zh="傳統系統開發動輒幾個月，我們用 Google 生態快速建置，最快兩週就可以上線。" data-en="Traditional development takes months. We use Google's ecosystem to build fast — live in as little as two weeks.">傳統系統開發動輒幾個月，我們用 Google 生態快速建置，最快兩週就可以上線。</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <span class="why-num">03</span>
+      <div class="why-text">
+        <h3 data-zh="零授權費，用 Google 免費工具" data-en="Zero licence fees">零授權費，用 Google 免費工具</h3>
+        <p data-zh="系統建立在你已有嘅 Google 帳號上，唔需要付額外月費，成本清晰透明。" data-en="Built on your existing Google account. No additional monthly software fees. Costs are transparent.">系統建立在你已有嘅 Google 帳號上，唔需要付額外月費，成本清晰透明。</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <span class="why-num">04</span>
+      <div class="why-text">
+        <h3 data-zh="交到手，唔係交到你自己搞" data-en="Handed over, not handed off">交到手，唔係交到你自己搞</h3>
+        <p data-zh="每個系統都附完整操作手冊，並親身培訓你嘅職員，確保真係識用、用得好。" data-en="Every system comes with a full SOP manual and in-person training. Your staff will know exactly how to use it.">每個系統都附完整操作手冊，並親身培訓你嘅職員，確保真係識用、用得好。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+  <div class="section-eyebrow" data-zh="收費參考" data-en="Pricing">收費參考</div>
+  <h2 class="section-title" data-zh="清晰定價，<em>冇隱藏收費</em>" data-en="Transparent pricing,<br><em>no hidden fees</em>">清晰定價，<em>冇隱藏收費</em></h2>
+  <div class="pricing-grid fade-up">
+    <div class="price-card">
+      <div class="price-name" data-zh="輕量方案" data-en="Starter">輕量方案</div>
+      <div class="price-amount"><sup>HKD </sup>8,000<br><span class="price-note" data-zh="一次性 · 起" data-en="one-time · from">一次性 · 起</span></div>
+      <div class="price-desc" data-zh="適合單一流程自動化，例如表單收集、自動通知、簡單報表。" data-en="For single-process automation — form collection, auto-notifications, simple reporting.">適合單一流程自動化，例如表單收集、自動通知、簡單報表。</div>
+      <ul class="price-features">
+        <li data-zh="需求分析及方案設計" data-en="Needs analysis & solution design">需求分析及方案設計</li>
+        <li data-zh="Google 工具系統建置" data-en="Google tools build">Google 工具系統建置</li>
+        <li data-zh="操作手冊一份" data-en="Full SOP manual">操作手冊一份</li>
+        <li data-zh="一小時操作培訓" data-en="1-hour training session">一小時操作培訓</li>
+        <li data-zh="30 日免費支援" data-en="30-day free support">30 日免費支援</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="price-featured-tag" data-zh="最受歡迎" data-en="Most Popular">最受歡迎</div>
+      <div class="price-name" data-zh="標準方案" data-en="Standard">標準方案</div>
+      <div class="price-amount"><sup>HKD </sup>15,000<br><span class="price-note" data-zh="一次性 · 起" data-en="one-time · from">一次性 · 起</span></div>
+      <div class="price-desc" data-zh="適合有一定複雜度嘅業務自動化，例如自動出單、對帳系統、多表連動。" data-en="For complex automation — auto invoicing, reconciliation, multi-table logic.">適合有一定複雜度嘅業務自動化，例如自動出單、對帳系統、多表連動。</div>
+      <ul class="price-features">
+        <li data-zh="深度業務流程分析" data-en="Deep workflow analysis">深度業務流程分析</li>
+        <li data-zh="完整系統架構設計" data-en="Full system architecture">完整系統架構設計</li>
+        <li data-zh="自動化邏輯開發" data-en="Automation logic development">自動化邏輯開發</li>
+        <li data-zh="完整 SOP 操作手冊" data-en="Complete SOP manual">完整 SOP 操作手冊</li>
+        <li data-zh="兩小時操作培訓" data-en="2-hour training session">兩小時操作培訓</li>
+        <li data-zh="30 日免費支援" data-en="30-day free support">30 日免費支援</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-name" data-zh="月費維護" data-en="Monthly Support">月費維護</div>
+      <div class="price-amount"><sup>HKD </sup>500<br><span class="price-note" data-zh="每月" data-en="per month">每月</span></div>
+      <div class="price-desc" data-zh="系統上線後的持續技術支援，確保穩定運行。" data-en="Ongoing technical support after launch to keep your system running smoothly.">系統上線後的持續技術支援，確保穩定運行。</div>
+      <ul class="price-features">
+        <li data-zh="同日回覆技術問題" data-en="Same-day response">同日回覆技術問題</li>
+        <li data-zh="系統故障緊急修復" data-en="Emergency bug fixes">系統故障緊急修復</li>
+        <li data-zh="每月一小時諮詢" data-en="1-hour monthly consult">每月一小時諮詢</li>
+        <li data-zh="Google API 更新維護" data-en="Google API update maintenance">Google API 更新維護</li>
+        <li data-zh="隨時 WhatsApp 聯絡" data-en="WhatsApp anytime">隨時 WhatsApp 聯絡</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact">
+  <div class="contact-center fade-up">
+    <div class="section-eyebrow" style="justify-content:center;" data-zh="聯絡我們" data-en="Get in Touch">聯絡我們</div>
+    <h2>
+      <span data-zh="你嘅業務，" data-en="Your business has ">你嘅業務，</span><br>
+      <span data-zh="有" data-en="something ">有</span><em data-zh="重複做" data-en="worth automating">重複做</em>
+      <span data-zh="嘅事嗎？" data-en=".">嘅事嗎？</span>
+    </h2>
+    <p data-zh="唔需要準備任何東西，直接 WhatsApp 我們，傾傾你公司嘅情況，我們幫你分析有冇值得自動化嘅地方——完全免費，唔夾唔使錢。" data-en="No preparation needed. Just WhatsApp us, tell us about your business, and we'll identify what's worth automating — completely free, no strings attached.">唔需要準備任何東西，直接 WhatsApp 我們，傾傾你公司嘅情況，我們幫你分析有冇值得自動化嘅地方——完全免費，唔夾唔使錢。</p>
+    <a href="https://wa.me/852XXXXXXXX?text=你好，我想了解多一點關於Movact的服務" class="contact-wa" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.397 5.61L.057 23.25a.75.75 0 00.918.919l5.671-1.328A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.705 9.705 0 01-4.95-1.354l-.355-.211-3.669.859.874-3.596-.232-.371A9.705 9.705 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
+      </svg>
+      <span data-zh="WhatsApp 即時聯絡" data-en="WhatsApp Us Now">WhatsApp 即時聯絡</span>
+    </a>
+    <span class="contact-note" data-zh="hello@movact.co · movact.co" data-en="hello@movact.co · movact.co">hello@movact.co · movact.co</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo-text">MOV<span>ACT</span></div>
+    <div class="footer-tagline" data-zh="Small Moves. Big Impact. · 香港中小企數碼化夥伴" data-en="Small Moves. Big Impact. · Digital Partner for Hong Kong SMEs">Small Moves. Big Impact. · 香港中小企數碼化夥伴</div>
+  </div>
+  <div class="footer-copy">© 2026 Movact · movact.co</div>
+</footer>
+
+<script>
+// ── LANG TOGGLE ──
+let currentLang = 'zh';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+  document.querySelectorAll('[data-zh]').forEach(el => {
+    const val = el.getAttribute('data-' + lang);
+    if (val) el.innerHTML = val;
+  });
+}
+
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up, .how-step').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
